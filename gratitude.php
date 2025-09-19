@@ -72,13 +72,13 @@
 
         <!-- Survey Title -->
         <div class="text-center mb-4 text-white">
-            <h2>Survey Questionnaire on Gender & Development (GAD) for College Students</h2>
+            <h2>Violence Against Women and Children</h2>
         </div>
 
         <!-- Purpose Section -->
         <div class="mx-auto text-center text-white">
             <p>
-                Purpose: To assess the awareness, participation, and experiences of college students regarding Gender and Development (GAD) initiatives in their educational institution.
+                Purpose: To assess the awareness, participation, and experiences of individuals.
             </p>
         </div>
 

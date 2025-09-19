@@ -24,7 +24,6 @@
                             <th>Case Title</th>
                             <th>Incident Location</th>
                             <th>Date of Incident</th>
-                            <th>Contact Person</th>
                             <th>Complainant Name</th>
                             <th>Case Details</th>
                             <th>Case Status</th>
@@ -41,12 +40,11 @@
                         foreach ($cases as $item) {
                         ?>
                         <tr>
-                            <td><?= htmlspecialchars($item['caseno']); ?></td>
-                            <td><?= htmlspecialchars($item['title']); ?></td>
-                            <td><?= htmlspecialchars($item['brgy']); ?></td>
-                            <td><?= htmlspecialchars($item['date']); ?></td>
-                            <td><?= htmlspecialchars($item['contactp']); ?></td>
-                            <td><?= htmlspecialchars($item['comp_name']); ?></td>
+                            <td class="doc-title"><?= htmlspecialchars($item['caseno']); ?></td>
+                            <td class="doc-title"><?= htmlspecialchars($item['title']); ?></td>
+                            <td class="doc-title"><?= htmlspecialchars($item['brgy']); ?></td>
+                            <td class="doc-title"><?= htmlspecialchars($item['date']); ?></td>
+                            <td class="doc-title"><?= htmlspecialchars($item['comp_name']); ?></td>
                             <td class="doc-title"><?= htmlspecialchars(strip_tags($item['long_description'])); ?></td>
                             <td><?= htmlspecialchars($item['status']); ?></td>
                             <td>
@@ -74,7 +72,7 @@
         white-space: nowrap;
     }
     #myTable .doc-title {
-        max-width: 200px;
+        max-width: 100px;
         white-space: normal;
         word-wrap: break-word;
     }

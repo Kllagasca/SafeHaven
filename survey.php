@@ -62,7 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mysqli_query($conn, $insertQuery);
             }
         }
-        echo "<script>alert('Survey responses saved successfully!');</script>";
+        header("Location: gratitude.php");
+        exit();
     } else {
         echo "<script>alert('Please fill out all questions before submitting.');</script>";
     }
@@ -199,6 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endif; ?>
                 <?php endforeach; ?>
                 <!-- Button Section -->
+                <?= alertmessage(); ?>
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary btn-sm">Submit Survey</button>
                 </div>

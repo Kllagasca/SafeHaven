@@ -105,12 +105,12 @@ require_once 'config/function.php';
 
 <?php if (isset($fname)): ?>
     <li class="nav-item">
-        <a class="nav-link" style="color: white;" href="<?php echo $redirectUrl; ?>">
+        <a class="nav-link" style="color:  white;;" href="<?php echo $redirectUrl; ?>">
             Hello, <?php echo $fname; ?>
         </a>
     </li>
     <li class="nav-item">
-        <a class="btn text-white ms-2" style="background-color: white;" href="logout.php">
+        <a class="btn ms-2" style="background-color: white;" href="logout.php">
             Logout
         </a>
     </li>

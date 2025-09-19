@@ -36,6 +36,46 @@ date_default_timezone_set("Asia/HongKong");
 
 <div class="row">
 
+    <!-- Total Cases -->
+    <div class="col-md-3 mb-4">
+        <div class="card card-body p-3"  style="background-color: #554fb0;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge bg-white rounded-pill px-2 py-1" style="color: #554fb0;">Total Cases</h6>
+                    <h3 class="font-weight-bold mb-0 text-white">
+                        <?= getCount('cases') ?>
+                    </h3>
+                </div>
+                <i class="fa fa-home text-white" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
+            </div>
+        </div>
+    </div>
+
+        <!-- Total Open Cases -->
+        <div class="col-md-3 mb-4">
+        <div class="card card-body p-3 bg-success">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-sm mb-1 text-capitalize bg-white text-success font-weight-bold badge rounded-pill px-2 py-1">Total Open Cases</h6>
+                    <h3 class="font-weight-bold text-white mb-0">
+                    <?php
+                        try {
+                            $query = "SELECT COUNT(*) AS total_count FROM cases WHERE approval_status = 'approved'";
+                            $stmt = $pdo->query($query); // Execute the query directly
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
+                            echo $row['total_count']; // Output the count
+                        } catch (PDOException $e) {
+                            echo "Error: " . $e->getMessage(); // Handle any exceptions
+                        }
+                    ?>
+
+                    </h3>
+                </div>
+                <i class="fa fa-check-circle text-white" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
+            </div>
+        </div>
+    </div>
+
     <!-- Total Posts -->
     <div class="col-md-3 mb-4">
         <div class="card card-body p-3"  style="background-color: #554fb0;">
