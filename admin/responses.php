@@ -176,6 +176,8 @@ if ($questionsResult->num_rows > 0) {
             echo '</ul>';
             echo '</div>';
         }
+
+        
     }
     ?>
 </figure>

@@ -37,10 +37,10 @@
                     <!-- Case Status Dropdown -->
                     <div class="mb-3">
                         <label for="status">Case Status</label>
-                        <select name="status" id="status" class="form-select">
+                        <select name="status" id="status" class="form-select" required>
                             <option value="">Select Case Status</option>
-                            <option value="Open">Open Case</option>
-                            <option value="Closed">Closed Case</option>
+                            <option value="0">Open Case</option>
+                            <option value="1">Closed Case</option>
                         </select>
                     </div>
                     </div>

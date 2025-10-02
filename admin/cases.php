@@ -11,6 +11,26 @@
                     <div class="col-md-7">
                         <!-- Add Case Button -->
                         <a href="case-create.php" class="btn btn-primary float-end">Add New Case</a>
+
+                        <form action="" method="GET">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input type="date" name="date" required value="<?= isset($_GET['date']) ? htmlspecialchars($_GET['date']) : '' ?>" class="form-control">
+                                </div>
+                                <div class="col-md-4">
+                                    <select name="status" required class="form-select">
+                                        <option value="">Select Status</option>
+                                        <option value="0" <?= (isset($_GET['status']) && $_GET['status'] == '0') ? 'selected' : '' ?>>Open</option>
+                                        <option value="1" <?= (isset($_GET['status']) && $_GET['status'] == '1') ? 'selected' : '' ?>>Closed</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                    <a href="cases.php" class="btn btn-danger">Reset</a>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -20,7 +40,7 @@
                 <table id="myTable" class="table table-bordered table-striped text-center">
                     <thead>
                         <tr>
-                            <th>Case No.</th>
+                            <th>Case Number </th>
                             <th>Case Title</th>
                             <th>Incident Location</th>
                             <th>Date of Incident</th>
@@ -32,10 +52,31 @@
                     </thead>
                     <tbody>
                         <?php
-                        $query = "SELECT * FROM cases";
-                        $stmt = $pdo->prepare($query);
-                        $stmt->execute();
-                        $cases = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            // ✅ Build status filter if set
+                            $statusFilter = isset($_GET['status']) && $_GET['status'] !== '' 
+                                ? "WHERE status = :status" 
+                                : "";
+
+                            // ✅ Also filter by date if provided
+                            $dateFilter = isset($_GET['date']) && $_GET['date'] !== '' 
+                                ? ( $statusFilter ? " AND date = :date" : "WHERE date = :date" ) 
+                                : "";
+
+                            // ✅ Final query
+                            $query = "SELECT * FROM cases $statusFilter $dateFilter ORDER BY date DESC";
+                            $stmt = $pdo->prepare($query);
+
+                            // ✅ Bind parameters if filters are used
+                            if ($statusFilter) {
+                                $stmt->bindValue(':status', intval($_GET['status']), PDO::PARAM_INT);
+                            }
+                            if ($dateFilter) {
+                                $stmt->bindValue(':date', $_GET['date']);
+                            }
+
+                            $stmt->execute();
+                            $cases = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
                         foreach ($cases as $item) {
                         ?>
@@ -45,8 +86,14 @@
                             <td class="doc-title"><?= htmlspecialchars($item['brgy']); ?></td>
                             <td class="doc-title"><?= htmlspecialchars($item['date']); ?></td>
                             <td class="doc-title"><?= htmlspecialchars($item['comp_name']); ?></td>
-                            <td class="doc-title"><?= htmlspecialchars(strip_tags($item['long_description'])); ?></td>
-                            <td><?= htmlspecialchars($item['status']); ?></td>
+                            <td>
+                                <a href="case-details.php?id=<?= urlencode($item['caseno']); ?>" class="btn btn-primary btn-sm">
+                                    View Details
+                                </a>
+                            </td>
+
+
+                            <td><?= $item['status'] == 0 ? "Open" : "Closed"; ?></td>
                             <td>
                             <a href="case-edit.php?caseno=<?= urlencode($item['caseno']); ?>" class="btn btn-primary btn-sm">Edit</a>
 

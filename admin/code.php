@@ -889,11 +889,14 @@ if (isset($_POST['updateNews'])) {
 
 
 
+include('../config/db_connect.php');       // XAMPP MySQLi connection ($conn)
+include('../config/supabase_connect.php'); // Supabase PDO connection ($pdo)
+
 if (isset($_POST['saveCase'])) {
 
     $casenum = validate($_POST['casenum']);
     $title = validate($_POST['title']);
-    $status = validate($_POST['status']);
+    $status = isset($_POST['status']) ? $_POST['status'] : '0';
     $barangay = validate($_POST['barangay']);
     $incident_date = validate($_POST['date']);
     $contactp = validate($_POST['contactp']);
@@ -909,8 +912,8 @@ if (isset($_POST['saveCase'])) {
     $raddress = validate($_POST['raddress']);
 
     $raw_description = $_POST['long_description'];
-    $sanitized_description = strip_tags($raw_description); // removes ALL HTML tags
-    $long_description = validate($sanitized_description);  // apply your custom cleaning
+    $sanitized_description = strip_tags($raw_description); 
+    $long_description = validate($sanitized_description);
     $finalImage = NULL;
 
     // Handle image upload
@@ -951,6 +954,7 @@ if (isset($_POST['saveCase'])) {
     }
 
     try {
+        // --- Save to Supabase (PDO) ---
         $query = "INSERT INTO cases ( caseno, title, status, brgy, date, contactp,
                                       comp_name, comp_age, comp_num, comp_address,
                                       resp_name, resp_age, resp_num, resp_address,
@@ -961,36 +965,67 @@ if (isset($_POST['saveCase'])) {
                           :long_description, :image)";
 
         $stmt = $pdo->prepare($query);
+        $stmt->execute([
+            ':casenum'          => $casenum,
+            ':title'            => $title,
+            ':status'           => $status,
+            ':barangay'         => $barangay,
+            ':incident_date'    => $incident_date,
+            ':contactp'         => $contactp,
+            ':complainant'      => $complainant,
+            ':cage'             => $cage,
+            ':cnum'             => $cnum,
+            ':caddress'         => $caddress,
+            ':respondent'       => $respondent,
+            ':rage'             => $rage,
+            ':rnum'             => $rnum,
+            ':raddress'         => $raddress,
+            ':long_description' => $long_description,
+            ':image'            => $finalImage
+        ]);
 
-        $stmt->bindParam(':casenum', $casenum);
-        $stmt->bindParam(':title', $title);
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':barangay', $barangay);
-        $stmt->bindParam(':incident_date', $incident_date);
-        $stmt->bindParam(':contactp', $contactp);
+        // save to localhost
+$insertQuery = "INSERT INTO `cases` (
+    `caseno`, `title`, `status`, `brgy`, `date`, `contactp`,
+    `comp_name`, `comp_age`, `comp_num`, `comp_address`,
+    `resp_name`, `resp_age`, `resp_num`, `resp_address`,
+    `long_description`, `image`
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        $stmt->bindParam(':complainant', $complainant);
-        $stmt->bindParam(':cage', $cage);
-        $stmt->bindParam(':cnum', $cnum);
-        $stmt->bindParam(':caddress', $caddress);
+if ($finalImage === NULL) {
+    $finalImage = '';
+}
 
-        $stmt->bindParam(':respondent', $respondent);
-        $stmt->bindParam(':rage', $rage);
-        $stmt->bindParam(':rnum', $rnum);
-        $stmt->bindParam(':raddress', $raddress);
 
-        $stmt->bindParam(':long_description', $long_description);
-        $stmt->bindParam(':image', $finalImage);
+$stmt2 = mysqli_prepare($conn, $insertQuery);
+if (!$stmt2) {
+    die("Prepare failed: " . mysqli_error($conn) . "\nQuery: " . $insertQuery);
+}
 
-        if ($stmt->execute()) {
-            redirect('cases.php', 'Case Added Successfully');
-        } else {
-            redirect('cases.php', 'Something Went Wrong');
-        }
-    } catch (PDOException $e) {
+if (!mysqli_stmt_bind_param(
+    $stmt2,
+    "ssssssssssssssss",
+    $casenum, $title, $status, $barangay, $incident_date, $contactp,
+    $complainant, $cage, $cnum, $caddress,
+    $respondent, $rage, $rnum, $raddress,
+    $long_description, $finalImage
+)) {
+    die("Bind failed: " . mysqli_stmt_error($stmt2));
+}
+
+if (!mysqli_stmt_execute($stmt2)) {
+    die("Execute failed: " . mysqli_stmt_error($stmt2));
+}
+
+mysqli_stmt_close($stmt2);
+
+redirect('cases.php', 'Case Saved Successfully');
+
+    } catch (Exception $e) {
         redirect('cases.php', 'Error: ' . $e->getMessage());
     }
 }
+
 
 
 if (isset($_POST['updateCase'])) {
@@ -1015,6 +1050,7 @@ if (isset($_POST['updateCase'])) {
     $long_description = strip_tags(validate($_POST['long_description']));
     $finalImage = validate($_POST['old_image']);
 
+    // Handle image upload
     if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
         $imageFile = $_FILES['image'];
         $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
@@ -1048,6 +1084,7 @@ if (isset($_POST['updateCase'])) {
             redirect('cases.php', 'Failed to move uploaded file');
         }
 
+        // Delete old image if exists
         if (!empty($finalImage) && file_exists('../' . $finalImage)) {
             unlink('../' . $finalImage);
         }
@@ -1055,7 +1092,13 @@ if (isset($_POST['updateCase'])) {
         $finalImage = 'assets/uploads/cases/' . $newFileName;
     }
 
+    // prevent NULL issue
+    if ($finalImage === NULL) {
+        $finalImage = '';
+    }
+
     try {
+        // --- Update Supabase (PDO) ---
         $query = "UPDATE cases SET 
             title = :title,
             status = :status,
@@ -1072,36 +1115,70 @@ if (isset($_POST['updateCase'])) {
             resp_address = :raddress,
             long_description = :long_description,
             image = :image
-        WHERE caseno = :caseno"; // ✅ caseno (not casenum)
+        WHERE caseno = :caseno";
 
         $stmt = $pdo->prepare($query);
+        $stmt->execute([
+            ':title'            => $title,
+            ':status'           => $status,
+            ':barangay'         => $barangay,
+            ':incident_date'    => $incident_date,
+            ':contactp'         => $contactp,
+            ':complainant'      => $complainant,
+            ':cage'             => $cage,
+            ':cnum'             => $cnum,
+            ':caddress'         => $caddress,
+            ':respondent'       => $respondent,
+            ':rage'             => $rage,
+            ':rnum'             => $rnum,
+            ':raddress'         => $raddress,
+            ':long_description' => $long_description,
+            ':image'            => $finalImage,
+            ':caseno'           => $caseno
+        ]);
 
-        $stmt->bindParam(':title', $title);
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':barangay', $barangay);
-        $stmt->bindParam(':incident_date', $incident_date);
-        $stmt->bindParam(':contactp', $contactp);
+        // --- Update XAMPP (MySQLi) ---
+        $updateQuery = "UPDATE `cases` SET
+            `title` = ?,
+            `status` = ?,
+            `brgy` = ?,
+            `date` = ?,
+            `contactp` = ?,
+            `comp_name` = ?,
+            `comp_age` = ?,
+            `comp_num` = ?,
+            `comp_address` = ?,
+            `resp_name` = ?,
+            `resp_age` = ?,
+            `resp_num` = ?,
+            `resp_address` = ?,
+            `long_description` = ?,
+            `image` = ?
+        WHERE `caseno` = ?";
 
-        $stmt->bindParam(':complainant', $complainant);
-        $stmt->bindParam(':cage', $cage);
-        $stmt->bindParam(':cnum', $cnum);
-        $stmt->bindParam(':caddress', $caddress);
-
-        $stmt->bindParam(':respondent', $respondent);
-        $stmt->bindParam(':rage', $rage);
-        $stmt->bindParam(':rnum', $rnum);
-        $stmt->bindParam(':raddress', $raddress);
-
-        $stmt->bindParam(':long_description', $long_description);
-        $stmt->bindParam(':image', $finalImage);
-        $stmt->bindParam(':caseno', $caseno); // ✅ Fix here (was casenum)
-
-        if ($stmt->execute()) {
-            redirect('cases.php', 'Case Updated Successfully');
-        } else {
-            redirect('cases.php', 'Something Went Wrong');
+        $stmt2 = mysqli_prepare($conn, $updateQuery);
+        if (!$stmt2) {
+            die("Prepare failed: " . mysqli_error($conn));
         }
-    } catch (PDOException $e) {
+
+        mysqli_stmt_bind_param(
+            $stmt2,
+            "ssssssssssssssss",
+            $title, $status, $barangay, $incident_date, $contactp,
+            $complainant, $cage, $cnum, $caddress,
+            $respondent, $rage, $rnum, $raddress,
+            $long_description, $finalImage, $caseno
+        );
+
+        if (!mysqli_stmt_execute($stmt2)) {
+            die("Execute failed: " . mysqli_stmt_error($stmt2));
+        }
+
+        mysqli_stmt_close($stmt2);
+
+        redirect('cases.php', 'Case Updated Successfully');
+
+    } catch (Exception $e) {
         redirect('cases.php', 'Error: ' . $e->getMessage());
     }
 }

@@ -12,6 +12,7 @@ $pageMappings = [
     'users.php' => ['Users', 'Pages'],
     'social-media.php' => ['Social Media/Links', 'Pages'],
     'case-create.php' => ['Create Case', 'Pages'],
+    'case-details.php' => ['Case Details', 'Pages'],
     'case-edit.php' => ['Edit Case', 'Pages']
     // Add more mappings as needed
 ];

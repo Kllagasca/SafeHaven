@@ -51,16 +51,41 @@ date_default_timezone_set("Asia/HongKong");
         </div>
     </div>
 
-        <!-- Total Open Cases -->
+        <!-- Total Closed Cases -->
         <div class="col-md-3 mb-4">
         <div class="card card-body p-3 bg-success">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-sm mb-1 text-capitalize bg-white text-success font-weight-bold badge rounded-pill px-2 py-1">Total Closed Cases</h6>
+                    <h3 class="font-weight-bold text-white mb-0">
+                    <?php
+                        try {
+                            $query = "SELECT COUNT(*) AS total_count FROM cases WHERE status = '1'";
+                            $stmt = $pdo->query($query); // Execute the query directly
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
+                            echo $row['total_count']; // Output the count
+                        } catch (PDOException $e) {
+                            echo "Error: " . $e->getMessage(); // Handle any exceptions
+                        }
+                    ?>
+
+                    </h3>
+                </div>
+                <i class="fa fa-check-circle text-white" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
+            </div>
+        </div>
+    </div>
+
+            <!-- Total Closed Cases -->
+    <div class="col-md-3 mb-4">
+        <div class="card card-body p-3 bg-danger">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
                     <h6 class="text-sm mb-1 text-capitalize bg-white text-success font-weight-bold badge rounded-pill px-2 py-1">Total Open Cases</h6>
                     <h3 class="font-weight-bold text-white mb-0">
                     <?php
                         try {
-                            $query = "SELECT COUNT(*) AS total_count FROM cases WHERE approval_status = 'approved'";
+                            $query = "SELECT COUNT(*) AS total_count FROM cases WHERE status = '0'";
                             $stmt = $pdo->query($query); // Execute the query directly
                             $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
                             echo $row['total_count']; // Output the count
