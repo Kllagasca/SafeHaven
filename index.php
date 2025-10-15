@@ -441,6 +441,11 @@ try {
                                     <?php if ($row['file'] != '') : ?>
                                         <div class="mt-auto text-center">
                                             <a href="<?= $row['file']; ?>"
+                                               class="btn text-white me-2" style="margin-top: 10px;"
+                                               target="_blank" rel="noopener noreferrer">
+                                                <i class="bi bi-eye align-center"></i> View File
+                                            </a>
+                                            <a href="<?= $row['file']; ?>"
                                                class="btn text-white" style="margin-top: 10px;"
                                                download>
                                                 <i class="bi bi-file-earmark align-center"></i> Download File

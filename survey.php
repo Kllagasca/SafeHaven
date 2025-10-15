@@ -8,6 +8,13 @@ if ($id <= 0) {
     die("Invalid survey ID");
 }
 
+// Require authentication before allowing access to the survey
+if (!isset($_SESSION['auth']) || $_SESSION['auth'] !== true) {
+    $next = 'survey.php?id=' . $id;
+    // Redirect to login with a next parameter so user returns after login
+    redirect('login.php?next=' . urlencode($next), 'Login to continue...');
+}
+
 $surveyQuery = "SELECT name, description FROM surveys WHERE id = $id";
 $surveyResult = mysqli_query($conn, $surveyQuery);
 if ($surveyResult && mysqli_num_rows($surveyResult) > 0) {
@@ -200,7 +207,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endif; ?>
                 <?php endforeach; ?>
                 <!-- Button Section -->
-                <?= alertmessage(); ?>
                 <div class="text-end">
                     <button type="submit" class="btn btn-primary btn-sm">Submit Survey</button>
                 </div>

@@ -38,14 +38,6 @@ if (isset($_SESSION['auth'])) {
                                 <input type="password" id="password" name="password" class="form-control" required>
                             </div>
                             <div class="mb-3">
-                                <label for="role">Choose Role</label>
-                                <select id="role" name="role" class="form-control" required>
-                                    <option value="" disabled selected>-- Select Role --</option>
-                                    <option value="fperson">Focal Person</option>
-                                    <option value="researcher">Researcher</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
                                 <button type="submit" name="register" class="btn btn-primary w-100">Register</button>
                             </div>
                         </form>

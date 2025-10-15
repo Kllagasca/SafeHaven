@@ -76,81 +76,16 @@ date_default_timezone_set("Asia/HongKong");
         </div>
     </div>
 
-            <!-- Total Closed Cases -->
-    <div class="col-md-3 mb-4">
-        <div class="card card-body p-3 bg-danger">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-sm mb-1 text-capitalize bg-white text-success font-weight-bold badge rounded-pill px-2 py-1">Total Open Cases</h6>
-                    <h3 class="font-weight-bold text-white mb-0">
-                    <?php
-                        try {
-                            $query = "SELECT COUNT(*) AS total_count FROM cases WHERE status = '0'";
-                            $stmt = $pdo->query($query); // Execute the query directly
-                            $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
-                            echo $row['total_count']; // Output the count
-                        } catch (PDOException $e) {
-                            echo "Error: " . $e->getMessage(); // Handle any exceptions
-                        }
-                    ?>
-
-                    </h3>
-                </div>
-                <i class="fa fa-check-circle text-white" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Total Posts -->
-    <div class="col-md-3 mb-4">
-        <div class="card card-body p-3"  style="background-color: #554fb0;">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge bg-white rounded-pill px-2 py-1" style="color: #554fb0;">Total Posts</h6>
-                    <h3 class="font-weight-bold mb-0 text-white">
-                        <?= getCount('services') ?>
-                    </h3>
-                </div>
-                <i class="fa fa-home text-white" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Total Approved Posts -->
-    <div class="col-md-3 mb-4">
-        <div class="card card-body p-3 bg-success">
-            <div class="d-flex align-items-center justify-content-between">
-                <div>
-                    <h6 class="text-sm mb-1 text-capitalize bg-white text-success font-weight-bold badge rounded-pill px-2 py-1">Total Approved Posts</h6>
-                    <h3 class="font-weight-bold text-white mb-0">
-                    <?php
-                        try {
-                            $query = "SELECT COUNT(*) AS total_count FROM services WHERE approval_status = 'approved'";
-                            $stmt = $pdo->query($query); // Execute the query directly
-                            $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
-                            echo $row['total_count']; // Output the count
-                        } catch (PDOException $e) {
-                            echo "Error: " . $e->getMessage(); // Handle any exceptions
-                        }
-                    ?>
-
-                    </h3>
-                </div>
-                <i class="fa fa-check-circle text-white" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
-            </div>
-        </div>
-    </div>
-
-    <!-- Total Pending Posts -->
+        <!-- Total Pending Cases -->
     <div class="col-md-3 mb-4">
         <div class="card card-body p-3" style="background-color: #554fb0;">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge bg-white rounded-pill px-2 py-1" style="color:#554fb0;">Total Pending Posts</h6>
+                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge bg-white rounded-pill px-2 py-1" style="color:#554fb0;">Total Pending Cases</h6>
                     <h3 class="font-weight-bold mb-0 text-white">
                     <?php
                         try {
-                            $query = "SELECT COUNT(*) AS total_count FROM services WHERE approval_status = 'pending'";
+                            $query = "SELECT COUNT(*) AS total_count FROM cases WHERE status = 'pending'";
                             $stmt = $pdo->query($query); // Execute the query directly
                             $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
                             echo $row['total_count']; // Output the count
@@ -166,16 +101,16 @@ date_default_timezone_set("Asia/HongKong");
         </div>
     </div>
 
-    <!-- Total Rejected Posts -->
+            <!-- Total Open Cases -->
     <div class="col-md-3 mb-4">
         <div class="card card-body p-3 bg-danger">
             <div class="d-flex align-items-center justify-content-between">
                 <div>
-                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge bg-white text-danger rounded-pill px-2 py-1">Total Rejected Posts</h6>
+                    <h6 class="text-sm mb-1 text-capitalize bg-white text-danger font-weight-bold badge rounded-pill px-2 py-1">Total Open Cases</h6>
                     <h3 class="font-weight-bold text-white mb-0">
                     <?php
                         try {
-                            $query = "SELECT COUNT(*) AS total_count FROM services WHERE approval_status = 'rejected'";
+                            $query = "SELECT COUNT(*) AS total_count FROM cases WHERE status = '0'";
                             $stmt = $pdo->query($query); // Execute the query directly
                             $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
                             echo $row['total_count']; // Output the count
@@ -190,6 +125,104 @@ date_default_timezone_set("Asia/HongKong");
             </div>
         </div>
     </div>
+
+    <!-- Total Posts -->
+    <div class="col-md-3 mb-4">
+        <div class="card card-body p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge rounded-pill px-2 py-1" style="background-color: #554fb0;">
+                        Total Posts
+                    </h6>
+                    <h3 class="font-weight-bold mb-0">
+                        <?= getCount('services') ?>
+                    </h3>
+                </div>
+                <i class="fa fa-home" style="font-size: 60px; flex-shrink: 0; padding-right: 20px; color: #554fb0;"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Total Approved Posts -->
+    <div class="col-md-3 mb-4">
+        <div class="card card-body p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge bg-success text-white rounded-pill px-2 py-1">
+                        Total Approved Posts
+                    </h6>
+                    <h3 class="font-weight-bold mb-0">
+                        <?php
+                            try {
+                                $query = "SELECT COUNT(*) AS total_count FROM services WHERE approval_status = 'approved'";
+                                $stmt = $pdo->query($query); // Execute the query directly
+                                $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
+                                echo $row['total_count']; // Output the count
+                            } catch (PDOException $e) {
+                                echo "Error: " . $e->getMessage(); // Handle any exceptions
+                            }
+                        ?>
+                    </h3>
+                </div>
+                <i class="fa fa-check-circle text-success" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Total Pending Posts -->
+    <div class="col-md-3 mb-4">
+        <div class="card card-body p-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold badge text-white rounded-pill px-2 py-1" style="background-color: #554fb0;">
+                        Total Pending Posts
+                    </h6>
+                    <h3 class="font-weight-bold mb-0">
+                        <?php
+                            try {
+                                $query = "SELECT COUNT(*) AS total_count FROM services WHERE approval_status = 'pending'";
+                                $stmt = $pdo->query($query); // Execute the query directly
+                                $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
+                                echo $row['total_count']; // Output the count
+                            } catch (PDOException $e) {
+                                echo "Error: " . $e->getMessage(); // Handle any exceptions
+                            }
+                        ?>
+                    </h3>
+                </div>
+                <i class="fa fa-clock" style="font-size: 60px; flex-shrink: 0; padding-right: 20px; color: #554fb0;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Rejected Posts -->
+    <div class="col-md-3 mb-4">
+        <div class="card card-body p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h6 class="text-sm mb-1 text-capitalize font-weight-bold bg-danger badge text-white rounded-pill px-2 py-1">
+                        Total Rejected Posts
+                    </h6>
+                    <h3 class="font-weight-bold mb-0">
+                        <?php
+                            try {
+                                $query = "SELECT COUNT(*) AS total_count FROM services WHERE approval_status = 'rejected'";
+                                $stmt = $pdo->query($query); // Execute the query directly
+                                $row = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the result as an associative array
+                                echo $row['total_count']; // Output the count
+                            } catch (PDOException $e) {
+                                echo "Error: " . $e->getMessage(); // Handle any exceptions
+                            }
+                        ?>
+                    </h3>
+                </div>
+                <i class="fa fa-times-circle text-danger" style="font-size: 60px; flex-shrink: 0; padding-right: 20px;"></i>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Total Documents -->
     <div class="col-md-3 mb-4">

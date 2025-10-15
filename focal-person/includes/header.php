@@ -10,8 +10,10 @@ include('authentication.php');
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/logo.png">
+    <link rel="icon" type="image/png" href="../assets/img/logo.png">
+    <link rel="shortcut icon" href="../assets/img/logo.png" type="image/png">
+    <meta name="theme-color" content="#7c2aa6">
     <title>
         Gender and Development Online Database
     </title>

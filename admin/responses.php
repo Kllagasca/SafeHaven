@@ -166,6 +166,36 @@ if ($questionsResult->num_rows > 0) {
             });
             </script>
             <?php
+            // === Analysis / Feedback card for choice questions ===
+            $totalForQuestion = array_sum($counts);
+            // find top answer
+            arsort($counts);
+            $topAnswer = array_key_first($counts);
+            $topCount = $counts[$topAnswer];
+            $topPct = $totalForQuestion > 0 ? round(($topCount / $totalForQuestion) * 100, 1) : 0;
+            // simple implication heuristic
+            $safeTop = htmlspecialchars(stripslashes((string)$topAnswer), ENT_QUOTES, 'UTF-8');
+            $implication = '';
+            if ($topPct >= 70) {
+                $implication = "There is a strong consensus for '" . $safeTop . "'; this likely reflects a clear preference among respondents.";
+            } elseif ($topPct >= 50) {
+                $implication = "A majority selected '" . $safeTop . "'; this suggests the option is generally preferred but not unanimous.";
+            } elseif ($topPct >= 30) {
+                $implication = "The top answer '" . $safeTop . "' has a plurality, indicating mixed opinions; consider follow-up for clarity.";
+            } else {
+                $implication = "No clear consensus: the top answer '" . $safeTop . "' is only slightly more common than others; you may want more data or a follow-up question.";
+            }
+            ?>
+            <div class="card mt-3 mb-4" style="background-color: rgba(255,255,255,0.95);">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">Analysis</h5>
+                    <p class="card-text mb-1"><strong>Total responses:</strong> <?php echo (int)$totalForQuestion; ?></p>
+                    <p class="card-text mb-1"><strong>Top answer:</strong> <?php echo $safeTop; ?> (<?php echo $topPct; ?>%)</p>
+                    <p class="card-text mb-2"><strong>What this implies:</strong> <?php echo $implication; ?></p>
+                    <p class="card-text small text-muted">This is an automated summary. Use it as a quick insight; review raw responses for context.</p>
+                </div>
+            </div>
+            <?php
         } else {
             echo '<div style=" padding:15px; border-radius:8px; margin-bottom:20px;">';
             echo '<h4 style="color:#fff;">' . htmlspecialchars($question->question) . '</h4>';
@@ -175,11 +205,48 @@ if ($questionsResult->num_rows > 0) {
             }
             echo '</ul>';
             echo '</div>';
-        }
 
-        
-    }
-    ?>
+            // === Analysis / Feedback card for text questions ===
+            $totalForQuestion = count($responses);
+            // determine most common text (simple frequency)
+            $textValues = array_map('trim', array_map('strval', array_column($responses, 'answer')));
+            $textCounts = array_count_values($textValues);
+            arsort($textCounts);
+            $topText = key($textCounts);
+            $topTextCount = $textCounts[$topText] ?? 0;
+            $topTextPct = $totalForQuestion > 0 ? round(($topTextCount / $totalForQuestion) * 100, 1) : 0;
+            // implication for text responses
+            $safeTopText = htmlspecialchars(stripslashes((string)$topText), ENT_QUOTES, 'UTF-8');
+            if ($topTextPct >= 50) {
+                $textImplication = "Many respondents mentioned '" . $safeTopText . "' which suggests this is a common concern or theme.";
+            } elseif ($topTextPct >= 25) {
+                $textImplication = "Several respondents mentioned '" . $safeTopText . "'; it may be a notable theme worth investigating further.";
+            } else {
+                $textImplication = "Responses are varied; no single theme dominates. Consider qualitative review for patterns.";
+            }
+            // show up to 5 sample responses
+            $samples = array_slice($textValues, 0, 5);
+            ?>
+            <div class="card mt-3 mb-4" style="background-color: rgba(255,255,255,0.95);">
+                <div class="card-body text-dark">
+                    <h5 class="card-title">Analysis</h5>
+                    <p class="card-text mb-2"><strong>Total responses:</strong> <?php echo (int)$totalForQuestion; ?></p>
+                    <p class="card-text mb-1"><strong>Sample responses:</strong></p>
+                    <ul class="mb-0">
+                        <?php foreach ($samples as $s): ?>
+                            <li><?php echo htmlspecialchars(stripslashes($s)); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php if ($totalForQuestion > count($samples)): ?>
+                        <p class="card-text small text-muted mt-2">And <?php echo $totalForQuestion - count($samples); ?> more responses not shown.</p>
+                    <?php endif; ?>
+                    <p class="card-text mb-2"><strong>What this implies:</strong> <?php echo $textImplication; ?></p>
+                </div>
+            </div>
+            <?php
+            } // end else (text answers block)
+        } // end if (empty/responses) else
+        ?>
 </figure>
 
 

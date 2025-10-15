@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-  <title>Gender and Development Online Database</title>
+  <title>SafeHaven</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/img/logo.png">
+  <link rel="shortcut icon" href="assets/img/logo.png" type="image/png">
+  <meta name="theme-color" content="#7c2aa6">
   <!-- Include Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">

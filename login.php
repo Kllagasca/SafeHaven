@@ -12,8 +12,15 @@ try {
     exit();
 }
 
+// Preserve optional 'next' parameter to redirect after login
+$next = isset($_GET['next']) ? $_GET['next'] : (isset($_POST['next']) ? $_POST['next'] : null);
+
 // Redirect if the user is already logged in
 if (isset($_SESSION['auth'])) {
+    // If there's a next param, send them there; otherwise go to index
+    if (!empty($next)) {
+        redirect($next, 'You are already logged in');
+    }
     redirect('index.php', 'You are already logged in');
 }
 
@@ -44,13 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['email'] = $row['email'];
                     $_SESSION['role'] = $row['role'];
 
-                    // Redirect based on role
+                    // Redirect based on role or next param
                     $redirectUrl = match ($row['role']) {
                         'admin' => 'admin/index.php',
                         'fperson' => 'focal-person/index.php',
                         'researcher' => 'researcher/index.php',
                         default => 'index.php',
                     };
+
+                    // If a 'next' parameter was provided (return URL), prefer that
+                    if (!empty($next)) {
+                        $redirectUrl = $next;
+                    }
 
                     redirect($redirectUrl, 'Logged in Successfully');
                 } else {
@@ -108,10 +120,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => $message,
                 ]);
 
-                redirect('login.php', 'Registration successful! Please log in.');
+                // After registration, if next exists, forward user to login with next preserved
+                $loginRedirect = 'login.php';
+                if (!empty($next)) {
+                    $loginRedirect .= '?next=' . urlencode($next);
+                }
+                redirect($loginRedirect, 'Registration successful! Please log in.');
             }
         } else {
-            redirect('login.php', 'All fields are required.');
+                redirect('login.php', 'All fields are required.');
         }
     }
 }
@@ -439,6 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container" id="container">
         <div class="form-container sign-up-container">
             <form method="POST" action="login.php">
+                <input type="hidden" name="next" value="<?= htmlspecialchars($next ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <h1>Create Account</h1>
                 <input type="text" name="fname" placeholder="First Name" required />
                 <input type="text" name="lname" placeholder="Last Name" required />
@@ -462,6 +480,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </a>
     </div>
             <form method="POST" action="login.php">
+                <input type="hidden" name="next" value="<?= htmlspecialchars($next ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <h1>Sign In</h1>
                 <div class="social-container">
                     <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>

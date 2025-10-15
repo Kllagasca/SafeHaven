@@ -33,9 +33,8 @@ try {
 <div class="py-4 mt-3 bg-light">
     <div class="container">
         <h2 class="text-dark text-center"><?= htmlspecialchars($rowData['name']); ?></h2>
-        <p class="text-dark text-center">
-            <span>Author: <?= htmlspecialchars($rowData['author']); ?></span> | 
-            <span>Date: <?= htmlspecialchars($rowData['created_at']); ?></span>
+        <p class="text-dark text-center"> 
+            <span>Posted at: <?= htmlspecialchars($rowData['created_at']); ?></span>
         </p>
     </div>
 </div>
